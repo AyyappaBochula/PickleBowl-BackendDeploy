@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
     'customers',
     'products',
+    'cart',
 ]
 
 MIDDLEWARE = [
@@ -78,6 +79,23 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Backend.wsgi.application'
 CORS_ALLOW_ALL_ORIGINS = True
 # DRF + JWT
+
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+# ✅ ADD THIS BLOCK HERE (FIX FOR YOUR ERROR)
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+    "guest-id",   # 👈 THIS IS THE IMPORTANT LINE
+]
 
 # JWT SETTINGS
 SIMPLE_JWT = {
