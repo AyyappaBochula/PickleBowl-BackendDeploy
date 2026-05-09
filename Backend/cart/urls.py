@@ -5,8 +5,8 @@ from .views import (
     UpdateCartItemView,
     RemoveCartItemView,
     UpdateCartQtyView,
-    # ApplyCouponView,
-    # CheckoutView,
+    CheckoutView,
+    ApplyCouponView,
     # OrderListView,
     # OrderDetailView
 )
@@ -26,14 +26,9 @@ urlpatterns = [
 
     # REMOVE ITEM
     path('remove/<int:item_id>/', RemoveCartItemView.as_view(), name="cart-remove"),
+    path('checkout/', CheckoutView.as_view(), name="checkout"),
+    
+    path("apply-coupon/", ApplyCouponView.as_view(), name="apply-coupon"),
 
-    # COUPON
-    # path('coupon/', ApplyCouponView.as_view(), name="coupon"),
-
-    # # CHECKOUT
-    # path('checkout/', CheckoutView.as_view(), name="checkout"),
-
-    # # ORDERS
-    # path('orders/', OrderListView.as_view(), name="orders"),
-    # path('orders/<int:order_id>/', OrderDetailView.as_view(), name="order-detail"),
+   
 ]

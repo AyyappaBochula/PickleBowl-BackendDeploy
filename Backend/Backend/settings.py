@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'customers',
     'products',
     'cart',
+    'orders',
 ]
 
 MIDDLEWARE = [
@@ -80,8 +81,9 @@ WSGI_APPLICATION = 'Backend.wsgi.application'
 CORS_ALLOW_ALL_ORIGINS = True
 # DRF + JWT
 
+RAZORPAY_KEY_ID = "rzp_test_SmpM6ztvoSeSrm"
+RAZORPAY_KEY_SECRET = "586yPn3kEq6UKQ7oWRZNpnSt"
 
-CORS_ALLOW_ALL_ORIGINS = True
 
 # ✅ ADD THIS BLOCK HERE (FIX FOR YOUR ERROR)
 CORS_ALLOW_HEADERS = [

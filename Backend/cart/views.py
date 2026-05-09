@@ -2,13 +2,17 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from products.models import Product, ProductWeight
-from .models import Cart, CartItem, Coupon, Order, OrderItem
+from .models import Cart, CartItem, Coupon
+from decimal import Decimal
+from django.utils import timezone
+
+from rest_framework import status
 
 from .serializers import (
     CartSerializer,
     AddToCartSerializer,
-    CouponApplySerializer,
-    CheckoutSerializer
+    CheckoutSerializer,
+    
 )
 
 # =========================
@@ -202,3 +206,264 @@ class UpdateCartQtyView(APIView):
 
         except CartItem.DoesNotExist:
             return Response({"error": "Item not found"}, status=404)
+
+
+# =========================
+# CHECKOUT VIEW
+# =========================
+class CheckoutView(APIView):
+
+    def post(self, request):
+
+        customer = getattr(request, "customer", None)
+        guest_id = request.headers.get("guest-id")
+
+        serializer = CheckoutSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=400)
+
+        cart_id = serializer.validated_data["cart_id"]
+        coupon_code = serializer.validated_data.get("coupon_code", "")
+
+        # =========================
+        # GET CART
+        # =========================
+        try:
+
+            cart = Cart.objects.get(id=cart_id)
+
+        except Cart.DoesNotExist:
+
+            return Response({
+                "status": False,
+                "message": "Cart not found"
+            }, status=404)
+
+        # =========================
+        # SECURITY CHECK
+        # =========================
+        if customer:
+
+            if cart.customer != customer:
+
+                return Response({
+                    "status": False,
+                    "message": "Unauthorized cart"
+                }, status=403)
+
+        else:
+
+            if cart.guest_id != guest_id:
+
+                return Response({
+                    "status": False,
+                    "message": "Unauthorized cart"
+                }, status=403)
+
+        # =========================
+        # EMPTY CART CHECK
+        # =========================
+        if not cart.items.exists():
+
+            return Response({
+                "status": False,
+                "message": "Cart is empty"
+            }, status=400)
+
+        # =========================
+        # TOTAL CALCULATION
+        # =========================
+        total_amount = Decimal("0")
+
+        cart_items = []
+
+        for item in cart.items.select_related(
+            "product",
+            "product_weight"
+        ):
+
+            item_total = item.total_price
+
+            total_amount += item_total
+
+            cart_items.append({
+                "id": item.id,
+                "product_id": item.product.id,
+                "product_name": item.product.name,
+                "weight": item.product_weight.weight_in_grams,
+                "price": item.product_weight.price,
+                "quantity": item.quantity,
+                "total_price": item_total
+            })
+
+        # =========================
+        # COUPON LOGIC
+        # =========================
+        discount_amount = Decimal("0")
+        applied_coupon = None
+
+        if coupon_code:
+
+            try:
+
+                coupon = Coupon.objects.get(
+                    code=coupon_code,
+                    is_active=True
+                )
+
+            except Coupon.DoesNotExist:
+
+                return Response({
+                    "status": False,
+                    "message": "Invalid coupon"
+                }, status=400)
+
+            now = timezone.now()
+
+            # DATE CHECK
+            if now < coupon.valid_from or now > coupon.valid_to:
+
+                return Response({
+                    "status": False,
+                    "message": "Coupon expired"
+                }, status=400)
+
+            # MINIMUM ORDER CHECK
+            if total_amount < coupon.minimum_order_amount:
+
+                return Response({
+                    "status": False,
+                    "message": f"Minimum order amount should be ₹{coupon.minimum_order_amount}"
+                }, status=400)
+
+            # FLAT DISCOUNT
+            if coupon.discount_type == "flat":
+
+                discount_amount = coupon.discount_value
+
+            # PERCENTAGE DISCOUNT
+            elif coupon.discount_type == "percentage":
+
+                discount_amount = (
+                    total_amount * coupon.discount_value
+                ) / Decimal("100")
+
+            applied_coupon = coupon.code
+
+            # SAVE COUPON TO CART
+            cart.coupon = coupon
+            cart.save()
+
+        else:
+
+            # REMOVE COUPON IF EMPTY
+            cart.coupon = None
+            cart.save()
+
+        # =========================
+        # FINAL AMOUNT
+        # =========================
+        final_amount = total_amount - discount_amount
+
+        if final_amount < 0:
+            final_amount = Decimal("0")
+
+        # =========================
+        # RESPONSE
+        # =========================
+        return Response({
+            "status": True,
+            "message": "Checkout data fetched",
+            "data": {
+
+                "cart_id": cart.id,
+
+                "cart_items": cart_items,
+
+                "coupon_code": applied_coupon,
+
+                "total_amount": total_amount,
+
+                "discount_amount": discount_amount,
+
+                "final_amount": final_amount
+            }
+        })
+
+
+
+class ApplyCouponView(APIView):
+
+    def post(self, request):
+
+        code = request.data.get("coupon_code")
+        total_amount = request.data.get("total_amount")
+
+        if not code or total_amount is None:
+            return Response({
+                "status": False,
+                "message": "coupon_code and total_amount required"
+            }, status=400)
+
+        try:
+            total_amount = Decimal(str(total_amount))
+        except:
+            return Response({
+                "status": False,
+                "message": "Invalid total amount"
+            }, status=400)
+
+        try:
+            coupon = Coupon.objects.get(
+                code=code,
+                is_active=True
+            )
+        except Coupon.DoesNotExist:
+            return Response({
+                "status": False,
+                "message": "Invalid coupon"
+            }, status=400)
+
+        now = timezone.now()
+
+        # DATE VALIDATION
+        if now < coupon.valid_from or now > coupon.valid_to:
+            return Response({
+                "status": False,
+                "message": "Coupon expired"
+            }, status=400)
+
+        # MINIMUM ORDER CHECK
+        if total_amount < coupon.minimum_order_amount:
+            return Response({
+                "status": False,
+                "message": f"Minimum order should be ₹{coupon.minimum_order_amount}"
+            }, status=400)
+
+        # CALCULATE DISCOUNT
+        if coupon.discount_type == "flat":
+            discount = coupon.discount_value
+
+        else:  # percentage
+            discount = (total_amount * coupon.discount_value) / Decimal("100")
+
+            # MAX CAP CHECK
+            if coupon.max_discount_amount and discount > coupon.max_discount_amount:
+                discount = coupon.max_discount_amount
+
+        final_amount = total_amount - discount
+
+        if final_amount < 0:
+            final_amount = Decimal("0")
+
+        return Response({
+            "status": True,
+            "message": "Coupon applied",
+            "data": {
+                "coupon_code": coupon.code,
+                "total_amount": total_amount,
+                "discount_amount": discount,
+                "final_amount": final_amount
+            }
+        })

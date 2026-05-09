@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Cart, CartItem, Coupon, Order, OrderItem
+from .models import Cart, CartItem, Coupon
 
 
 # =========================
@@ -72,54 +72,3 @@ class CouponAdmin(admin.ModelAdmin):
     search_fields = ("code",)
 
 
-# =========================
-# ORDER ITEM INLINE
-# =========================
-class OrderItemInline(admin.TabularInline):
-    model = OrderItem
-    extra = 0
-
-
-# =========================
-# ORDER ADMIN
-# =========================
-@admin.register(Order)
-class OrderAdmin(admin.ModelAdmin):
-
-    list_display = (
-        "id",
-        "customer",
-        "guest_id",
-        "total_amount",
-        "payment_status",
-        "order_status",
-        "created_at"
-    )
-
-    list_filter = (
-        "payment_status",
-        "order_status"
-    )
-
-    search_fields = (
-        "customer__name",
-        "mobile",
-        "id"
-    )
-
-    inlines = [OrderItemInline]
-
-
-# =========================
-# ORDER ITEM ADMIN
-# =========================
-@admin.register(OrderItem)
-class OrderItemAdmin(admin.ModelAdmin):
-
-    list_display = (
-        "id",
-        "order",
-        "product_name",
-        "quantity",
-        "total_price"
-    )

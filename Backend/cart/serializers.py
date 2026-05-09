@@ -1,7 +1,9 @@
 from rest_framework import serializers
-from .models import Cart, CartItem, Coupon, Order, OrderItem
+from .models import Cart, CartItem, Coupon
+from django.utils import timezone
 from products.models import Product, ProductWeight
 class CartItemSerializer(serializers.ModelSerializer):
+    
 
     product_name = serializers.CharField(source="product.name", read_only=True)
     weight = serializers.CharField(source="product_weight.weight_in_grams", read_only=True)
@@ -52,27 +54,15 @@ class AddToCartSerializer(serializers.Serializer):
 class CouponApplySerializer(serializers.Serializer):
 
     code = serializers.CharField()
-class OrderItemSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = OrderItem
-        fields = "__all__"
-class OrderSerializer(serializers.ModelSerializer):
 
-    items = OrderItemSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Order
-        fields = "__all__"
+# =========================
+# CHECKOUT SERIALIZER
+# =========================
 class CheckoutSerializer(serializers.Serializer):
 
-    full_name = serializers.CharField()
-    mobile = serializers.CharField()
-    email = serializers.EmailField(required=False)
-
-    address = serializers.CharField()
-    village_city = serializers.CharField()
-    mandal = serializers.CharField()
-    district = serializers.CharField()
-    state = serializers.CharField()
-    pincode = serializers.CharField()
+    cart_id = serializers.IntegerField()
+    coupon_code = serializers.CharField(
+        required=False,
+        allow_blank=True
+    )
