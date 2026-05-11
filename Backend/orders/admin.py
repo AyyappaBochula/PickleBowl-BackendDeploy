@@ -15,6 +15,7 @@ class OrderAdmin(admin.ModelAdmin):
         "id",
         "name",
         "phone",
+        "email",
         "final_amount",
         "payment_status",
         "created_at"

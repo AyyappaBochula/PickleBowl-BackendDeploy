@@ -143,3 +143,32 @@ class FestivalOfferProductsView(generics.ListAPIView):
         ).prefetch_related(
             "weights"
         ).order_by("-updated_at")
+
+from django.db.models import Q
+
+# -----------------------
+# SEARCH PRODUCTS
+# -----------------------
+class ProductSearchView(generics.ListAPIView):
+
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+
+        query = self.request.GET.get("search")
+
+        queryset = Product.objects.prefetch_related(
+            "weights"
+        )
+
+        if query:
+
+            queryset = queryset.filter(
+
+                Q(name__icontains=query) |
+                Q(description__icontains=query) |
+                Q(category__name__icontains=query)
+
+            )
+
+        return queryset.order_by("-updated_at")

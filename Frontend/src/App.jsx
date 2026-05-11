@@ -9,7 +9,7 @@ import Register from "./Main/Register";
 import Profile from "./Main/Profile";
 import Cart from "./Main/Cart";
 import Checkout from "./Main/Checkout";
-
+import Tracking from "./Main/Tracking";
 // Products
 import CategoryDetail from "./Products/CategoryDetail";
 import ProductDetail from "./Products/ProductDetail";
@@ -54,6 +54,7 @@ export default function App() {
 
           {/* Checkout */}
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/tracking" element={<Tracking />} />
 
         </Routes>
       </div>

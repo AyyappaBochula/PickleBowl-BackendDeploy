@@ -15,6 +15,7 @@ from .views import (
     FestivalListView,
     FestivalProductListView,
     FestivalOfferProductsView,
+    ProductSearchView,
 )
 
 urlpatterns = [
@@ -78,5 +79,9 @@ urlpatterns = [
     path(
         "festival-offers/",
         FestivalOfferProductsView.as_view()
+    ),
+    path(
+        "search/",
+        ProductSearchView.as_view()
     ),
 ]

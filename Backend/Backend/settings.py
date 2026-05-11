@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'products',
     'cart',
     'orders',
+    'tracking',
 ]
 
 MIDDLEWARE = [
@@ -84,6 +85,18 @@ CORS_ALLOW_ALL_ORIGINS = True
 RAZORPAY_KEY_ID = "rzp_test_SmpM6ztvoSeSrm"
 RAZORPAY_KEY_SECRET = "586yPn3kEq6UKQ7oWRZNpnSt"
 
+# Email settings
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST = "smtp.gmail.com"
+
+EMAIL_PORT = 587
+
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = "ayyappabochula@gmail.com"
+
+EMAIL_HOST_PASSWORD = "bhwqqjwhbcxbyyjg"
 
 # ✅ ADD THIS BLOCK HERE (FIX FOR YOUR ERROR)
 CORS_ALLOW_HEADERS = [

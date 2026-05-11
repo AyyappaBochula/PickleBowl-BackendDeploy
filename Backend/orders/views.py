@@ -2,12 +2,13 @@ from decimal import Decimal
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from tracking.models import OrderTracking
 from cart.models import Cart, CartItem, Coupon
 from products.models import Product, ProductWeight
 from orders.models import Order, OrderItem
 import razorpay
 from django.conf import settings
+from .email_utils import send_order_confirmation_email
 
 client = razorpay.Client(
     auth=(
@@ -181,11 +182,12 @@ class CreateOrderView(APIView):
 
             name = request.data.get("name")
             phone = request.data.get("phone")
+            email = request.data.get("email")
             street = request.data.get("street")
             city = request.data.get("city")
             pincode = request.data.get("pincode")
 
-            if not all([name, phone, street, city, pincode]):
+            if not all([name, phone, email, street, city, pincode]):
                 return Response({
                     "status": False,
                     "message": "Address required"
@@ -301,6 +303,7 @@ class CreateOrderView(APIView):
                 final_amount=final_amount,
                 name=name,
                 phone=phone,
+                email=email,
                 street=street,
                 city=city,
                 pincode=pincode
@@ -333,9 +336,6 @@ class CreateOrderView(APIView):
                 "status": False,
                 "message": str(e)
             }, status=500)
-
-
-
 # =========================
 # VERIFY PAYMENT
 # =========================
@@ -359,11 +359,34 @@ class VerifyPaymentView(APIView):
                 razorpay_order_id=razorpay_order_id
             )
 
+            # =========================
+            # UPDATE PAYMENT
+            # =========================
             order.payment_status = "paid"
             order.razorpay_payment_id = razorpay_payment_id
             order.save()
 
-            # ✅ REMOVE CART ITEMS
+            # =========================
+            # CREATE TRACKING
+            # =========================
+            OrderTracking.objects.create(
+
+                order=order,
+
+                customer_name=order.name,
+
+                customer_phone=order.phone,
+
+                customer_email=order.email,
+
+                status="placed",
+
+                message="Your order has been placed successfully."
+            )
+
+            # =========================
+            # REMOVE CART ITEMS
+            # =========================
             try:
 
                 if order.customer:
@@ -383,9 +406,9 @@ class VerifyPaymentView(APIView):
                 "message": "Payment Success"
             })
 
-        except:
+        except Exception as e:
 
             return Response({
                 "status": False,
-                "message": "Payment Failed"
+                "message": str(e)
             })

@@ -479,6 +479,7 @@ export default function Checkout() {
   const [address, setAddress] = useState({
     name: "",
     phone: "",
+    email:"",
     street: "",
     city: "",
     pincode: ""
@@ -594,7 +595,14 @@ export default function Checkout() {
   // PAYMENT
   const payWithRazorpay = async () => {
 
-    if (!address.name || !address.phone) {
+    if (
+  !address.name ||
+  !address.phone ||
+  !address.email ||
+  !address.street ||
+  !address.city ||
+  !address.pincode
+) {
       alert("Fill address");
       return;
     }
@@ -622,9 +630,10 @@ export default function Checkout() {
       },
 
       prefill: {
-        name: address.name,
-        contact: address.phone
-      },
+  name: address.name,
+  contact: address.phone,
+  email: address.email
+},
 
       theme: { color: "#16a34a" }
     };
@@ -673,7 +682,12 @@ export default function Checkout() {
               <span className="text-gray-500 text-sm">Phone</span>
               <span className="font-semibold text-sm">{success.phone}</span>
             </div>
-
+<div className="flex justify-between">
+  <span className="text-gray-500 text-sm">Email</span>
+  <span className="font-semibold text-sm">
+    {address.email}
+  </span>
+</div>
             <div className="flex justify-between">
               <span className="text-gray-500 text-sm">Status</span>
               <span className="text-green-600 font-bold text-sm">Confirmed ✔</span>
@@ -742,6 +756,25 @@ export default function Checkout() {
         </p>
       )}
     </div>
+    {/* EMAIL */}
+<div>
+  <input
+    type="email"
+    placeholder="email"
+    className="border p-3 rounded-xl w-full transition-all focus:scale-[1.02] focus:border-green-500"
+    value={address.email}
+    onChange={(e) =>
+      setAddress({ ...address, email: e.target.value })
+    }
+  />
+
+  {address.email &&
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address.email) && (
+      <p className="text-red-500 text-xs mt-1">
+        Enter valid email
+      </p>
+  )}
+</div>
 
     {/* STREET */}
     <input
