@@ -1,0 +1,207 @@
+{% extends 'adminpanel/base.html' %}
+
+{% block title %}
+Edit Category
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =========================
+   HEADER
+========================= */
+
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.page-header h1{
+    font-size:30px;
+    color:#0f172a;
+    font-weight:800;
+}
+
+.page-header p{
+    color:#64748b;
+    margin-top:5px;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.form-card{
+    background:white;
+    padding:30px;
+    border-radius:22px;
+    box-shadow:0 12px 30px rgba(0,0,0,0.08);
+    max-width:700px;
+}
+
+/* =========================
+   INPUTS
+========================= */
+
+label{
+    font-weight:700;
+    color:#0f172a;
+    display:block;
+    margin-bottom:8px;
+}
+
+input[type="text"],
+input[type="file"]{
+    width:100%;
+    padding:14px;
+    border:1px solid #cbd5e1;
+    border-radius:12px;
+    font-size:14px;
+    transition:0.3s;
+    background:#f8fafc;
+}
+
+input:focus{
+    outline:none;
+    border-color:#2563eb;
+    background:white;
+    box-shadow:0 0 0 4px rgba(37,99,235,0.1);
+}
+
+/* =========================
+   IMAGE PREVIEW
+========================= */
+
+.image-box{
+    margin-top:10px;
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.image-box img{
+    width:120px;
+    height:120px;
+    object-fit:cover;
+    border-radius:16px;
+    border:3px solid #e2e8f0;
+}
+
+/* =========================
+   CHECKBOX
+========================= */
+
+.checkbox-box{
+    margin-top:18px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#f8fafc;
+    padding:14px;
+    border-radius:12px;
+    border:1px solid #e2e8f0;
+}
+
+.checkbox-box input{
+    width:18px;
+    height:18px;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.btn{
+    margin-top:25px;
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:white;
+    border:none;
+    padding:14px 20px;
+    border-radius:12px;
+    font-weight:700;
+    cursor:pointer;
+    transition:0.3s;
+    width:100%;
+    font-size:15px;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 20px rgba(37,99,235,0.25);
+}
+
+</style>
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<div class="page-header">
+
+    <div>
+        <h1>✏️ Edit Category</h1>
+        <p>Update category information and image</p>
+    </div>
+
+</div>
+
+<!-- =========================
+     FORM CARD
+========================= -->
+
+<div class="form-card">
+
+    <form method="POST" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <!-- NAME -->
+        <label>Category Name</label>
+        <input type="text" name="name" value="{{ category.name }}" required>
+
+        <br><br>
+
+        <!-- IMAGE -->
+        <label>Current Image</label>
+
+        {% if category.image %}
+        <div class="image-box">
+            <img src="{{ category.image.url }}">
+            <span style="color:#64748b;font-size:14px;">
+                Current category image
+            </span>
+        </div>
+        {% endif %}
+
+        <br>
+
+        <label>Upload New Image</label>
+        <input type="file" name="image">
+
+        <!-- CHECKBOX -->
+        <div class="checkbox-box">
+
+            <input type="checkbox" name="is_festival"
+            {% if category.is_festival %}checked{% endif %}>
+
+            <span>
+                Mark as Festival Category
+            </span>
+
+        </div>
+
+        <!-- BUTTON -->
+        <button type="submit" class="btn">
+            Update Category
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,224 @@
+{% extends 'adminpanel/base.html' %}
+
+{% block title %}
+Edit Festival
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =========================
+   HEADER
+========================= */
+
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.page-header h1{
+    font-size:30px;
+    color:#0f172a;
+}
+
+.page-header p{
+    color:#64748b;
+    font-size:14px;
+}
+
+/* =========================
+   FORM CARD
+========================= */
+
+.form-card{
+    background:white;
+    padding:30px;
+    border-radius:24px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.06);
+}
+
+/* =========================
+   GRID
+========================= */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.full-width{
+    grid-column:1/3;
+}
+
+/* =========================
+   INPUTS
+========================= */
+
+label{
+    font-weight:700;
+    color:#0f172a;
+    font-size:14px;
+    margin-bottom:6px;
+    display:block;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:1px solid #cbd5e1;
+    outline:none;
+    font-size:14px;
+    transition:0.3s;
+    background:#f8fafc;
+}
+
+input:focus{
+    border-color:#2563eb;
+    background:white;
+    box-shadow:0 0 0 4px rgba(37,99,235,0.1);
+}
+
+/* =========================
+   IMAGE
+========================= */
+
+.image-box{
+    margin-top:10px;
+}
+
+.image-box img{
+    width:160px;
+    height:160px;
+    object-fit:cover;
+    border-radius:16px;
+    border:3px solid #e2e8f0;
+}
+
+/* =========================
+   CHECKBOX
+========================= */
+
+.checkbox{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:10px;
+}
+
+.checkbox input{
+    width:18px;
+    height:18px;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.btn{
+    margin-top:25px;
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:white;
+    padding:14px 20px;
+    border:none;
+    border-radius:14px;
+    font-weight:700;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(37,99,235,0.25);
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:768px){
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .full-width{
+        grid-column:auto;
+    }
+}
+
+</style>
+
+<div class="page-header">
+
+    <div>
+        <h1>Edit Festival</h1>
+        <p>Update festival details and campaign settings</p>
+    </div>
+
+</div>
+
+<div class="form-card">
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-grid">
+
+            <!-- NAME -->
+            <div>
+                <label>Festival Name</label>
+                <input type="text"
+                       name="name"
+                       value="{{ festival.name }}"
+                       required>
+            </div>
+
+            <!-- START DATE -->
+            <div>
+                <label>Start Date</label>
+                <input type="date"
+                       name="start_date"
+                       value="{{ festival.start_date }}">
+            </div>
+
+            <!-- END DATE -->
+            <div>
+                <label>End Date</label>
+                <input type="date"
+                       name="end_date"
+                       value="{{ festival.end_date }}">
+            </div>
+
+            <!-- IMAGE -->
+            <div class="full-width">
+
+                <label>Current Image</label>
+
+                {% if festival.image %}
+                <div class="image-box">
+                    <img src="{{ festival.image.url }}">
+                </div>
+                {% endif %}
+
+                <br>
+
+                <label>Change Image</label>
+                <input type="file" name="image">
+
+            </div>
+
+        </div>
+
+        <button type="submit" class="btn">
+            Update Festival
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

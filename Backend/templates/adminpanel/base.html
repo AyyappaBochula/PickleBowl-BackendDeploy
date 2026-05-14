@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+        PickleBowl Admin
+        {% endblock %}
+    </title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:Arial, Helvetica, sans-serif;
+            background:#f1f5f9;
+        }
+
+        .container{
+            display:flex;
+            min-height:100vh;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar{
+
+            width:270px;
+
+            background:
+            linear-gradient(
+                180deg,
+                #1d4ed8,
+                #1e3a8a
+            );
+
+            color:white;
+
+            padding:25px 18px;
+
+            position:fixed;
+
+            height:100vh;
+
+            overflow:auto;
+        }
+
+        .logo{
+
+            display:flex;
+
+            align-items:center;
+
+            gap:14px;
+
+            margin-bottom:45px;
+        }
+
+        .logo img{
+
+            width:58px;
+
+            height:58px;
+
+            border-radius:14px;
+
+            background:white;
+
+            object-fit:cover;
+
+            padding:5px;
+        }
+
+        .logo h2{
+
+            font-size:30px;
+
+            font-weight:bold;
+        }
+
+        .admin-info{
+
+            background:rgba(255,255,255,0.12);
+
+            padding:16px;
+
+            border-radius:14px;
+
+            margin-bottom:30px;
+        }
+
+        .admin-info h3{
+
+            font-size:18px;
+
+            margin-bottom:5px;
+        }
+
+        .admin-info p{
+
+            font-size:14px;
+
+            opacity:0.85;
+        }
+
+        .menu{
+
+            list-style:none;
+        }
+
+        .menu li{
+
+            margin-bottom:12px;
+        }
+
+        .menu a{
+
+            display:flex;
+
+            align-items:center;
+
+            gap:10px;
+
+            text-decoration:none;
+
+            color:white;
+
+            padding:15px 16px;
+
+            border-radius:12px;
+
+            transition:0.3s;
+
+            font-size:16px;
+
+            font-weight:500;
+        }
+
+        .menu a:hover{
+
+            background:rgba(255,255,255,0.12);
+        }
+
+        .menu .active{
+
+            background:white;
+
+            color:#1d4ed8;
+
+            font-weight:bold;
+
+            box-shadow:
+            0 5px 15px rgba(0,0,0,0.12);
+        }
+
+        .logout-btn{
+
+            margin-top:30px;
+
+            background:#ef4444 !important;
+
+            color:white !important;
+        }
+
+        .logout-btn:hover{
+
+            background:#dc2626 !important;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main{
+
+            margin-left:270px;
+
+            width:calc(100% - 270px);
+
+            padding:35px;
+        }
+
+        .topbar{
+
+            display:flex;
+
+            justify-content:space-between;
+
+            align-items:center;
+
+            margin-bottom:35px;
+        }
+
+        .topbar h1{
+
+            color:#0f172a;
+
+            font-size:32px;
+        }
+
+        .topbar p{
+
+            color:#64748b;
+
+            margin-top:5px;
+        }
+
+        /* =========================
+           CARDS
+        ========================= */
+
+        .cards{
+
+            display:grid;
+
+            grid-template-columns:
+            repeat(auto-fit,minmax(240px,1fr));
+
+            gap:22px;
+        }
+
+        .card{
+
+            background:white;
+
+            border-radius:20px;
+
+            padding:28px;
+
+            text-decoration:none;
+
+            transition:0.3s;
+
+            box-shadow:
+            0 8px 25px rgba(0,0,0,0.06);
+        }
+
+        .card:hover{
+
+            transform:translateY(-5px);
+
+            box-shadow:
+            0 15px 35px rgba(0,0,0,0.12);
+        }
+
+        .card h3{
+
+            color:#64748b;
+
+            margin-bottom:14px;
+
+            font-size:17px;
+        }
+
+        .card h2{
+
+            color:#0f172a;
+
+            font-size:40px;
+        }
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        .table-box{
+
+            background:white;
+
+            border-radius:18px;
+
+            padding:25px;
+
+            overflow:auto;
+
+            box-shadow:
+            0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        table{
+
+            width:100%;
+
+            border-collapse:collapse;
+        }
+
+        table th{
+
+            background:#08408a;
+
+            color:#1e3a8a;
+
+            padding:16px;
+
+            text-align:left;
+        }
+
+        table td{
+
+            padding:16px;
+
+            border-bottom:1px solid #e2e8f0;
+        }
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        .btn{
+
+            padding:10px 15px;
+
+            border-radius:8px;
+
+            text-decoration:none;
+
+            color:white;
+
+            font-size:14px;
+
+            display:inline-block;
+        }
+
+        .btn-blue{
+            background:#2563eb;
+        }
+
+        .btn-green{
+            background:#16a34a;
+        }
+
+        .btn-red{
+            background:#dc2626;
+        }
+
+        .btn-orange{
+            background:#ea580c;
+        }
+
+        @media(max-width:900px){
+
+            .sidebar{
+
+                width:100%;
+
+                height:auto;
+
+                position:relative;
+            }
+
+            .main{
+
+                margin-left:0;
+
+                width:100%;
+            }
+
+            .container{
+
+                flex-direction:column;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- SIDEBAR -->
+
+        <div class="sidebar">
+
+            <div class="logo">
+
+                <img
+                    src="/static/images/logo.png"
+                    alt=""
+                >
+
+                <h2>PickleBowl</h2>
+
+            </div>
+
+            <div class="admin-info">
+
+                <h3>
+                    {{ request.session.admin_name }}
+                </h3>
+
+                <p>
+                    {{ request.session.admin_role }}
+                </p>
+
+            </div>
+
+            <ul class="menu">
+
+                <li>
+                    <a
+                        href="/admin/dashboard/"
+                        class="{% if request.path == '/admin/dashboard/' %}active{% endif %}"
+                    >
+                        Dashboard
+                    </a>
+                </li>
+
+                <li>
+                    <a
+                        href="/admin/products/"
+                        class="{% if '/admin/products/' in request.path %}active{% endif %}"
+                    >
+                        Products
+                    </a>
+                </li>
+
+                <li>
+                    <a
+                        href="/admin/categories/"
+                        class="{% if '/admin/categories/' in request.path %}active{% endif %}"
+                    >
+                        Categories
+                    </a>
+                </li>
+
+                <li>
+                    <a
+                        href="/admin/festivals/"
+                        class="{% if '/admin/festivals/' in request.path %}active{% endif %}"
+                    >
+                        Festivals
+                    </a>
+                </li>
+
+                <li>
+                    <a
+                        href="/admin/orders/"
+                        class="{% if '/admin/orders/' in request.path %}active{% endif %}"
+                    >
+                        Orders
+                    </a>
+                </li>
+
+                <li>
+                    <a
+                        href="/admin/customers/"
+                        class="{% if '/admin/customers/' in request.path %}active{% endif %}"
+                    >
+                        Customers
+                    </a>
+                </li>
+
+                <li>
+                    <a
+                        href="/admin/tracking/"
+                        class="{% if '/admin/tracking/' in request.path %}active{% endif %}"
+                    >
+                        Tracking
+                    </a>
+                </li>
+
+                <li>
+                    <a
+                        href="/admin/logout/"
+                        class="logout-btn"
+                    >
+                        Logout
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
+        <!-- MAIN -->
+
+        <div class="main">
+
+            {% block content %}
+
+            {% endblock %}
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

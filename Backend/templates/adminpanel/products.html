@@ -1,0 +1,460 @@
+{% extends 'adminpanel/base.html' %}
+
+{% block title %}
+Products - PickleBowl
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <h1 class="page-title">
+            Products Management
+        </h1>
+
+        <p class="page-subtitle">
+            Manage all pickle products from one place
+        </p>
+
+    </div>
+
+    <a href="{% url 'add_product' %}" class="add-btn">
+        + Add Product
+    </a>
+
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="success-alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<!-- =========================
+     FILTER SECTION
+========================= -->
+
+<div class="filter-card">
+
+    <form method="GET" class="filter-form">
+
+        <select name="category" class="filter-select">
+
+            <option value="">
+                All Categories
+            </option>
+
+            {% for category in categories %}
+
+                <option value="{{ category.id }}"
+                    {% if request.GET.category == category.id|stringformat:"s" %}
+                        selected
+                    {% endif %}
+                >
+                    {{ category.name }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+        <button type="submit" class="filter-btn">
+            Filter
+        </button>
+
+        <a href="{% url 'products_list' %}" class="reset-btn">
+            Reset
+        </a>
+
+    </form>
+
+</div>
+
+<!-- =========================
+     TABLE
+========================= -->
+
+<div class="content-card">
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Image</th>
+
+                    <th>Product</th>
+
+                    <th>Category</th>
+
+                    <th>Price</th>
+
+                    <th>Rating</th>
+
+                    <th>Status</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for product in products %}
+
+                <tr>
+
+                    <td><strong>#{{ product.id }}</strong></td>
+
+                    <td>
+
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" class="product-img">
+                        {% else %}
+                            <img src="/static/images/no-image.png" class="product-img">
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        <div class="product-info">
+
+                            <h4>{{ product.name }}</h4>
+
+                            <p>{{ product.description|truncatechars:50 }}</p>
+
+                        </div>
+
+                    </td>
+
+                    <td>
+                        <span class="category-badge">
+                            {{ product.category.name }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <strong class="price">₹{{ product.price_per_kg }}</strong>
+                    </td>
+
+                    <td>
+                        ⭐ {{ product.rating }}
+                    </td>
+
+                    <td>
+
+                        <div class="status-wrapper">
+
+                            {% if product.is_popular %}
+                                <span class="status-badge popular-badge">Popular</span>
+                            {% endif %}
+
+                            {% if product.is_festival_offer %}
+                                <span class="status-badge festival-badge">Festival</span>
+                            {% endif %}
+
+                        </div>
+
+                    </td>
+
+                    <td>
+
+                        <div class="action-buttons">
+
+                            <a href="{% url 'edit_product' product.id %}" class="table-btn edit-btn">
+                                Edit
+                            </a>
+
+                            <a href="{% url 'delete_product' product.id %}" class="table-btn delete-btn"
+                               onclick="return confirm('Delete this product?')">
+                                Delete
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="8">
+
+                        <div class="empty-box">
+                            <h3>No Products Found</h3>
+                            <p>Start adding products to your store.</p>
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- =========================
+     STYLES
+========================= -->
+
+<style>
+
+/* HEADER */
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.page-title{
+    font-size:32px;
+    color:#0f172a;
+    font-weight:800;
+}
+
+.page-subtitle{
+    color:#64748b;
+    font-size:15px;
+}
+
+/* ADD BUTTON */
+.add-btn{
+    background:linear-gradient(135deg,#16a34a,#15803d);
+    color:white;
+    padding:14px 22px;
+    border-radius:14px;
+    text-decoration:none;
+    font-weight:700;
+    transition:0.3s;
+    box-shadow:0 8px 20px rgba(22,163,74,0.25);
+}
+
+.add-btn:hover{
+    transform:translateY(-2px);
+}
+
+/* ALERT */
+.success-alert{
+    background:#dcfce7;
+    color:#166534;
+    padding:16px;
+    border-radius:14px;
+    margin-bottom:20px;
+    font-weight:600;
+}
+
+/* FILTER */
+.filter-card{
+    background:white;
+    padding:16px;
+    border-radius:16px;
+    margin-bottom:20px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.06);
+}
+
+.filter-form{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+
+.filter-select{
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #cbd5e1;
+    min-width:220px;
+}
+
+.filter-btn{
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:12px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.reset-btn{
+    background:#f1f5f9;
+    color:#0f172a;
+    padding:12px 18px;
+    border-radius:10px;
+    text-decoration:none;
+    font-weight:700;
+}
+
+/* TABLE */
+.content-card{
+    background:white;
+    border-radius:24px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,0.06);
+}
+
+.table-wrapper{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+thead{
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+}
+
+thead th{
+    color:white;
+    padding:16px;
+    text-align:left;
+    font-size:14px;
+    font-weight:700;
+}
+
+tbody td{
+    padding:16px;
+    border-bottom:1px solid #e2e8f0;
+    color:#334155;
+}
+
+tbody tr:hover{
+    background:#f8fafc;
+}
+
+/* PRODUCT */
+.product-img{
+    width:75px;
+    height:75px;
+    object-fit:cover;
+    border-radius:14px;
+}
+
+.product-info h4{
+    color:#0f172a;
+    font-size:16px;
+    margin-bottom:5px;
+}
+
+.product-info p{
+    color:#64748b;
+    font-size:13px;
+}
+
+/* BADGES */
+.category-badge{
+    background:#dbeafe;
+    color:#1d4ed8;
+    padding:8px 14px;
+    border-radius:30px;
+    font-size:12px;
+    font-weight:700;
+}
+
+.price{
+    color:#16a34a;
+    font-size:16px;
+}
+
+/* STATUS */
+.status-wrapper{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.status-badge{
+    padding:6px 12px;
+    border-radius:30px;
+    font-size:12px;
+    font-weight:700;
+}
+
+.popular-badge{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.festival-badge{
+    background:#ede9fe;
+    color:#7c3aed;
+}
+
+/* ACTION */
+.action-buttons{
+    display:flex;
+    gap:10px;
+}
+
+.table-btn{
+    padding:8px 12px;
+    border-radius:8px;
+    color:white;
+    text-decoration:none;
+    font-size:13px;
+    font-weight:700;
+}
+
+.edit-btn{
+    background:#f59e0b;
+}
+
+.delete-btn{
+    background:#dc2626;
+}
+
+/* EMPTY */
+.empty-box{
+    text-align:center;
+    padding:60px;
+}
+
+.empty-box h3{
+    color:#0f172a;
+}
+
+.empty-box p{
+    color:#64748b;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+
+    table{
+        min-width:1100px;
+    }
+
+    .page-header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+}
+
+</style>
+
+{% endblock %}

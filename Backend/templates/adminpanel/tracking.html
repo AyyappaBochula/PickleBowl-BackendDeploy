@@ -1,0 +1,428 @@
+{% extends 'adminpanel/base.html' %}
+
+{% block title %}
+Tracking - PickleBowl
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <h1 class="page-title">
+            Order Tracking
+        </h1>
+
+        <p class="page-subtitle">
+            Update and manage delivery status for customer orders
+        </p>
+
+    </div>
+
+</div>
+
+<div class="content-card">
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Order ID</th>
+
+                    <th>Customer</th>
+
+                    <th>Phone</th>
+
+                    <th>Current Status</th>
+
+                    <th>Created At</th>
+
+                    <th>Update Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in tracking %}
+
+                <tr>
+
+                    <td>
+
+                        <strong>
+                            #{{ item.order.id }}
+                        </strong>
+
+                    </td>
+
+                    <td>
+
+                        {{ item.customer_name }}
+
+                    </td>
+
+                    <td>
+
+                        {{ item.customer_phone }}
+
+                    </td>
+
+                    <td>
+
+                        {% if item.status == "placed" %}
+
+                            <span class="status-badge placed">
+                                Placed
+                            </span>
+
+                        {% elif item.status == "confirmed" %}
+
+                            <span class="status-badge confirmed">
+                                Confirmed
+                            </span>
+
+                        {% elif item.status == "packed" %}
+
+                            <span class="status-badge packed">
+                                Packed
+                            </span>
+
+                        {% elif item.status == "shipped" %}
+
+                            <span class="status-badge shipped">
+                                Shipped
+                            </span>
+
+                        {% elif item.status == "out_for_delivery" %}
+
+                            <span class="status-badge delivery">
+                                Out For Delivery
+                            </span>
+
+                        {% elif item.status == "delivered" %}
+
+                            <span class="status-badge delivered">
+                                Delivered
+                            </span>
+
+                        {% else %}
+
+                            <span class="status-badge cancelled">
+                                Cancelled
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {{ item.created_at }}
+
+                    </td>
+
+                    <td>
+
+                        <select
+                            class="status-select"
+                            onchange="updateTracking(this, {{ item.id }})"
+                        >
+
+                            <option value="">
+                                Change Status
+                            </option>
+
+                            <option value="placed">
+                                Placed
+                            </option>
+
+                            <option value="confirmed">
+                                Confirmed
+                            </option>
+
+                            <option value="packed">
+                                Packed
+                            </option>
+
+                            <option value="shipped">
+                                Shipped
+                            </option>
+
+                            <option value="out_for_delivery">
+                                Out For Delivery
+                            </option>
+
+                            <option value="delivered">
+                                Delivered
+                            </option>
+
+                            <option value="cancelled">
+                                Cancelled
+                            </option>
+
+                        </select>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="6">
+
+                        <div class="empty-box">
+
+                            <h3>
+                                No Tracking Data Found
+                            </h3>
+
+                            <p>
+                                Tracking information will appear here.
+                            </p>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<style>
+
+.page-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+}
+
+.page-title{
+
+    font-size:32px;
+
+    color:#0f172a;
+
+    font-weight:700;
+
+    margin-bottom:6px;
+}
+
+.page-subtitle{
+
+    color:#64748b;
+
+    font-size:15px;
+}
+
+.content-card{
+
+    background:white;
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+    box-shadow:
+    0 10px 35px rgba(0,0,0,0.06);
+}
+
+.table-wrapper{
+
+    overflow-x:auto;
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+}
+
+table th{
+
+    background:#2563eb;
+
+    color:white;
+
+    padding:18px;
+
+    text-align:left;
+
+    font-size:14px;
+
+    font-weight:600;
+}
+
+table td{
+
+    padding:18px;
+
+    border-bottom:1px solid #e2e8f0;
+
+    color:#334155;
+
+    font-size:14px;
+}
+
+table tr:hover{
+
+    background:#f8fafc;
+}
+
+.status-badge{
+
+    padding:8px 14px;
+
+    border-radius:30px;
+
+    font-size:12px;
+
+    font-weight:700;
+}
+
+.placed{
+
+    background:#dbeafe;
+
+    color:#1d4ed8;
+}
+
+.confirmed{
+
+    background:#ede9fe;
+
+    color:#7c3aed;
+}
+
+.packed{
+
+    background:#fef3c7;
+
+    color:#92400e;
+}
+
+.shipped{
+
+    background:#cffafe;
+
+    color:#155e75;
+}
+
+.delivery{
+
+    background:#fde68a;
+
+    color:#92400e;
+}
+
+.delivered{
+
+    background:#dcfce7;
+
+    color:#166534;
+}
+
+.cancelled{
+
+    background:#fee2e2;
+
+    color:#dc2626;
+}
+
+.status-select{
+
+    padding:12px 14px;
+
+    border-radius:12px;
+
+    border:1px solid #cbd5e1;
+
+    outline:none;
+
+    min-width:190px;
+
+    background:white;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:0.3s;
+}
+
+.status-select:focus{
+
+    border-color:#2563eb;
+
+    box-shadow:
+    0 0 0 4px rgba(37,99,235,0.12);
+}
+
+.empty-box{
+
+    text-align:center;
+
+    padding:70px 20px;
+}
+
+.empty-box h3{
+
+    color:#0f172a;
+
+    margin-bottom:10px;
+}
+
+.empty-box p{
+
+    color:#64748b;
+}
+
+@media(max-width:900px){
+
+    table{
+
+        min-width:950px;
+    }
+}
+
+</style>
+
+<script>
+
+function updateTracking(selectBox, id){
+
+    const status = selectBox.value;
+
+    if(status){
+
+        window.location.href =
+        `/admin/tracking-status/${id}/${status}/`;
+
+    }
+}
+
+</script>
+
+{% endblock %}

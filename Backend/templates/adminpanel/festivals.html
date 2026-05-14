@@ -1,0 +1,300 @@
+{% extends 'adminpanel/base.html' %}
+
+{% block title %}
+Festivals
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =========================
+   HEADER
+========================= */
+
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+    gap:20px;
+}
+
+.page-title h1{
+    font-size:32px;
+    color:#0f172a;
+    margin-bottom:6px;
+}
+
+.page-title p{
+    color:#64748b;
+    font-size:15px;
+}
+
+.add-btn{
+    background:linear-gradient(135deg,#16a34a,#15803d);
+    color:white;
+    padding:14px 22px;
+    text-decoration:none;
+    border-radius:14px;
+    font-weight:700;
+    transition:0.3s;
+    box-shadow:0 10px 20px rgba(22,163,74,0.18);
+}
+
+.add-btn:hover{
+    transform:translateY(-2px);
+}
+
+/* =========================
+   GRID
+========================= */
+
+.festival-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:28px;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.festival-card{
+    background:white;
+    border-radius:22px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,0.06);
+    transition:0.3s;
+}
+
+.festival-card:hover{
+    transform:translateY(-5px);
+}
+
+.festival-image{
+    width:100%;
+    height:220px;
+    overflow:hidden;
+    background:#f1f5f9;
+}
+
+.festival-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.festival-badge{
+    position:absolute;
+    margin:14px;
+    background:white;
+    color:#2563eb;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:700;
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.festival-content{
+    padding:22px;
+}
+
+.festival-content h2{
+    color:#0f172a;
+    font-size:22px;
+    margin-bottom:14px;
+}
+
+.date-box{
+    display:flex;
+    gap:12px;
+    margin-bottom:18px;
+}
+
+.date-item{
+    flex:1;
+    background:#f8fafc;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid #e2e8f0;
+}
+
+.date-label{
+    font-size:12px;
+    color:#64748b;
+}
+
+.date-value{
+    font-size:14px;
+    font-weight:700;
+    color:#0f172a;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.festival-footer{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:10px;
+}
+
+/* STATUS */
+.status{
+    background:#dcfce7;
+    color:#166534;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:700;
+}
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+
+.actions{
+    display:flex;
+    gap:10px;
+    margin-top:14px;
+}
+
+.btn{
+    padding:10px 14px;
+    border-radius:10px;
+    font-size:13px;
+    font-weight:700;
+    text-decoration:none;
+    transition:0.3s;
+    color:white;
+}
+
+.edit-btn{
+    background:#f59e0b;
+}
+
+.edit-btn:hover{
+    background:#d97706;
+    transform:translateY(-2px);
+}
+
+.delete-btn{
+    background:#dc2626;
+}
+
+.delete-btn:hover{
+    background:#b91c1c;
+    transform:translateY(-2px);
+}
+
+/* EMPTY */
+
+.empty-box{
+    background:white;
+    padding:60px;
+    text-align:center;
+    border-radius:22px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.06);
+}
+
+</style>
+
+<div class="page-header">
+
+    <div class="page-title">
+        <h1>Festivals</h1>
+        <p>Manage festive campaigns and seasonal offers</p>
+    </div>
+
+    <a href="{% url 'add_festival' %}" class="add-btn">
+        + Add Festival
+    </a>
+
+</div>
+
+{% if festivals %}
+
+<div class="festival-grid">
+
+    {% for festival in festivals %}
+
+    <div class="festival-card">
+
+        <div class="festival-image">
+
+            {% if festival.image %}
+                <img src="{{ festival.image.url }}">
+            {% endif %}
+
+        </div>
+
+        <div class="festival-content">
+
+            <h2>{{ festival.name }}</h2>
+
+            <div class="date-box">
+
+                <div class="date-item">
+                    <div class="date-label">Start</div>
+                    <div class="date-value">{{ festival.start_date }}</div>
+                </div>
+
+                <div class="date-item">
+                    <div class="date-label">End</div>
+                    <div class="date-value">{{ festival.end_date }}</div>
+                </div>
+
+            </div>
+
+            <div class="festival-footer">
+
+                <div>
+                    ID: #{{ festival.id }}
+                </div>
+
+                <div class="status">
+                    Active
+                </div>
+
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="actions">
+
+                <a href="{% url 'edit_festival' festival.id %}" class="btn edit-btn">
+                    Edit
+                </a>
+
+                <a href="{% url 'delete_festival' festival.id %}"
+                   class="btn delete-btn"
+                   onclick="return confirm('Delete this festival?')">
+                    Delete
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="empty-box">
+    <h2>No Festivals Found</h2>
+    <p>Create your first festival campaign</p>
+</div>
+
+{% endif %}
+
+{% endblock %}
