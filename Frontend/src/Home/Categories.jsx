@@ -267,7 +267,7 @@ export default function Categories() {
           id: "all",
           name: "All",
           slug: "all",
-          image: "/logo1.png", // add image in public/categories/
+          image: "/all.png", // add image in public/categories/
         };
 
         setCategories([allCategory, ...data]);
