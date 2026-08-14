@@ -462,7 +462,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
-const API = "http://127.0.0.1:8000/api";
+const API = import.meta.env.VITE_API_URL || "/api";
 
 export default function Checkout() {
 

@@ -205,7 +205,7 @@ export default function FestivalOffers() {
   // ✅ FETCH FESTIVAL PRODUCTS
   useEffect(() => {
 
-    fetch("http://127.0.0.1:8000/api/products/festival-offers/")
+    fetch("/api/products/festival-offers/")
       .then((res) => res.json())
       .then((data) => {
 

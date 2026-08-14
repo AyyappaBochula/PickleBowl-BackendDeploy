@@ -139,7 +139,7 @@ export default function PopularProducts() {
   // ✅ FETCH POPULAR PRODUCTS
   useEffect(() => {
 
-    fetch("http://127.0.0.1:8000/api/products/popular/")
+    fetch("/api/products/popular/")
       .then((res) => res.json())
       .then((data) => {
 

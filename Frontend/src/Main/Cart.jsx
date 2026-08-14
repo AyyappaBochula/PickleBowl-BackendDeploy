@@ -489,7 +489,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Trash2, Plus, Minus, ShoppingCart } from "lucide-react";
 
-const API = "http://localhost:8000/api";
+const API = import.meta.env.VITE_API_URL || "/api";
 
 export default function Cart() {
 

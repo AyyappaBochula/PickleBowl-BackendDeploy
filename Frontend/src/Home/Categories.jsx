@@ -257,7 +257,7 @@ export default function Categories() {
   // FETCH CATEGORIES
   useEffect(() => {
 
-    fetch("http://127.0.0.1:8000/api/products/categories/")
+    fetch("/api/products/categories/")
     // fetch("https://uncolored-spousal-depraved.ngrok-free.dev/api/products/categories/")
       .then((res) => res.json())
       .then((data) => {

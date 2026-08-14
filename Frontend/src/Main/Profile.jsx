@@ -41,7 +41,7 @@ export default function Profile() {
     try {
 
       const response = await fetch(
-        "http://127.0.0.1:8000/api/customers/profile/",
+        "/api/customers/profile/",
         {
           method: "GET",
 
@@ -94,7 +94,7 @@ export default function Profile() {
       setLoading(true);
 
       const response = await fetch(
-        "http://127.0.0.1:8000/api/customers/profile/",
+        "/api/customers/profile/",
         {
           method: "PUT",
 
@@ -169,7 +169,7 @@ export default function Profile() {
       setPasswordLoading(true);
 
       const response = await fetch(
-        "http://127.0.0.1:8000/api/customers/change-password/",
+        "/api/customers/change-password/",
         {
           method: "POST",
 

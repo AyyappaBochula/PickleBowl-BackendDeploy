@@ -3,7 +3,7 @@ import axios from "axios";
 import { Search, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const API = "http://localhost:8000/api";
+const API = import.meta.env.VITE_API_URL || "/api";
 
 export default function SearchBar({ closeSearch }) {
 
@@ -97,7 +97,7 @@ export default function SearchBar({ closeSearch }) {
               >
 
                 <img
-                  src={`http://localhost:8000${product.image}`}
+                  src={product.image}
                   alt={product.name}
                   className="w-16 h-16 rounded-lg object-cover"
                 />
