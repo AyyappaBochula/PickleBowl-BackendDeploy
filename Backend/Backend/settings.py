@@ -147,7 +147,9 @@ TEMPLATES = [
 # }
 DATABASES = {
     "default": dj_database_url.config(
-        default=os.environ.get("DATABASE_URL"),
+        # SQLite keeps first-time local setup simple. Production must provide
+        # DATABASE_URL (for example, a Neon Postgres connection string).
+        default=os.environ.get("DATABASE_URL", f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
         conn_max_age=600,
         ssl_require=not DEBUG,
     )
@@ -276,6 +278,13 @@ EMAIL_HOST_PASSWORD = os.environ.get(
 DEFAULT_FROM_EMAIL = os.environ.get(
     "DEFAULT_FROM_EMAIL",
     EMAIL_HOST_USER
+)
+
+# Free Render web services cannot make SMTP connections on the usual email
+# ports. Keep checkout and tracking usable unless email is explicitly enabled
+# on a host that supports it.
+EMAIL_NOTIFICATIONS_ENABLED = (
+    os.environ.get("EMAIL_NOTIFICATIONS_ENABLED", "False").lower() == "true"
 )
 
 

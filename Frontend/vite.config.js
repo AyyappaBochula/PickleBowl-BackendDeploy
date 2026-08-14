@@ -3,6 +3,11 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   base: '/static/frontend/',
+  build: {
+    // Django/WhiteNoise serves the production React bundle.
+    outDir: '../Backend/static/frontend',
+    emptyOutDir: true,
+  },
   plugins: [react()],
 
   server: {

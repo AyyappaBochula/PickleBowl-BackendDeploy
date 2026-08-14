@@ -4,6 +4,9 @@ from django.conf import settings
 
 def send_tracking_update_email(tracking):
 
+    if not settings.EMAIL_NOTIFICATIONS_ENABLED:
+        return
+
     order = tracking.order
 
     subject = f"Pickle Bowl Order Update #{order.id}"

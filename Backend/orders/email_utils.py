@@ -4,6 +4,9 @@ from django.conf import settings
 
 def send_order_confirmation_email(order):
 
+    if not settings.EMAIL_NOTIFICATIONS_ENABLED:
+        return
+
     items_text = ""
 
     for item in order.items.all():
