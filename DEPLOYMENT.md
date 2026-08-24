@@ -28,6 +28,36 @@ portfolio site.
 
 The deployment runs migrations and builds the React bundle automatically.
 
+## Django admin
+
+The default Django admin is available at:
+
+`https://<your-render-host>/superadmin/`
+
+In Render, open the service's **Environment** settings and add these secret
+variables before deploying:
+
+- `DJANGO_SUPERUSER_USERNAME`
+- `DJANGO_SUPERUSER_EMAIL`
+- `DJANGO_SUPERUSER_PASSWORD`
+- `ADMIN_NAME`
+- `ADMIN_MOBILE`
+- `ADMIN_PASSWORD`
+
+The deploy automatically runs migrations and creates or updates both accounts.
+Use the first three variables to sign in to Django admin. Use `ADMIN_MOBILE`
+and `ADMIN_PASSWORD` to sign in to the separate PickleBowl custom admin panel
+at `/admin/`.
+
+## Product images
+
+The API returns image URLs under `/media/`, and the Django service now serves
+those URLs in production as well as development. Images already checked into
+`Backend/media` are included in the deploy. Render's free filesystem is
+ephemeral, so images uploaded through an admin panel can disappear after a
+redeploy or service restart; use persistent object storage for production
+uploads.
+
 ## Important free-tier limits
 
 - Render Free web services sleep after 15 minutes of inactivity. The first

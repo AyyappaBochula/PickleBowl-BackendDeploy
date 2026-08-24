@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     rootDir: Backend
-    buildCommand: npm --prefix ../Frontend ci && npm --prefix ../Frontend run build && pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    buildCommand: npm --prefix ../Frontend ci && npm --prefix ../Frontend run build && pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate && python manage.py seed_admins
     startCommand: gunicorn Backend.wsgi:application
     healthCheckPath: /api/products/
     envVars:
@@ -19,4 +19,16 @@ services:
       - key: RAZORPAY_KEY_ID
         sync: false
       - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: DJANGO_SUPERUSER_USERNAME
+        sync: false
+      - key: DJANGO_SUPERUSER_EMAIL
+        sync: false
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false
+      - key: ADMIN_NAME
+        sync: false
+      - key: ADMIN_MOBILE
+        sync: false
+      - key: ADMIN_PASSWORD
         sync: false

@@ -531,6 +531,7 @@ from django.shortcuts import (
 )
 
 from django.contrib import messages
+from django.contrib.auth.hashers import check_password
 
 from .models import AdminUser
 
@@ -568,11 +569,10 @@ def admin_login(request):
 
         try:
 
-            admin = AdminUser.objects.get(
-                mobile=mobile,
-                password=password,
-                is_active=True
-            )
+            admin = AdminUser.objects.get(mobile=mobile, is_active=True)
+
+            if not check_password(password, admin.password):
+                raise AdminUser.DoesNotExist
 
             request.session["admin_id"] = admin.id
 
@@ -582,7 +582,7 @@ def admin_login(request):
 
             return redirect("admin_dashboard")
 
-        except:
+        except AdminUser.DoesNotExist:
 
             messages.error(
                 request,

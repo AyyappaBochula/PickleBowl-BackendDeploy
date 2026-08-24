@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Generated static files
+Backend/staticfiles/
+
+# Frontend dependencies and build output
+Frontend/node_modules/
+Frontend/dist/
+
+# Local tooling
+.vscode/
+.DS_Store
