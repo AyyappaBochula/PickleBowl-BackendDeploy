@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     rootDir: Backend
-    buildCommand: npm --prefix ../Frontend ci && npm --prefix ../Frontend run build && pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate && python manage.py seed_admins
+    buildCommand: npm --prefix ../Frontend ci && npm --prefix ../Frontend run build && pip install -r requirements.txt && python manage.py collectstatic --noinput --clear && python manage.py migrate && python manage.py seed_admins
     startCommand: gunicorn Backend.wsgi:application
     healthCheckPath: /api/products/
     envVars:
